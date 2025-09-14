@@ -73,7 +73,7 @@
       let ampm = hours >= 12 ? 'PM' : 'AM';
       hours = hours % 12;
       if (hours === 0) hours = 12;
-      return `${hours}:${minutes} ${ampm}`;
+      return `Next feed: ${hours}:${minutes} ${ampm}`;
     }
 
     function updateTimer() {
