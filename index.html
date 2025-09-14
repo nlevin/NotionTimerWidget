@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Countdown Timer Widget</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #fff;
+      color: #222;
+      margin: 0;
+      padding: 1.5em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 250px;
+    }
+    .timer {
+      font-size: 2.2em;
+      letter-spacing: 2px;
+      margin-bottom: 0.3em;
+    }
+    .reset-btn {
+      margin-top: 0.8em;
+      padding: 0.6em 1.2em;
+      font-size: 1em;
+      border: none;
+      background: #4f46e5;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .reset-btn:hover {
+      background: #3730a3;
+    }
+    .end-time {
+      font-size: 0.95em;
+      color: #666;
+      margin-top: 0.4em;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="timer" id="timer">03:00:00</div>
+  <button class="reset-btn" onclick="resetTimer()">Reset</button>
+  <div class="end-time" id="endTime"></div>
+
+  <script>
+    const THREE_HOURS_MS = 3 * 60 * 60 * 1000;
+    let endTimestamp = Date.now() + THREE_HOURS_MS;
+    let intervalId = null;
+
+    function formatTime(ms) {
+      let totalSeconds = Math.max(0, Math.floor(ms / 1000));
+      let h = Math.floor(totalSeconds / 3600);
+      let m = Math.floor((totalSeconds % 3600) / 60);
+      let s = totalSeconds % 60;
+      return [
+        h.toString().padStart(2, '0'),
+        m.toString().padStart(2, '0'),
+        s.toString().padStart(2, '0')
+      ].join(':');
+    }
+
+    function formatEndTime(ts) {
+      const dt = new Date(ts);
+      // Show local time, e.g., "Reaches at 01:37 AM"
+      let hours = dt.getHours();
+      let minutes = dt.getMinutes().toString().padStart(2, '0');
+      let ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      if (hours === 0) hours = 12;
+      return `Reaches at ${hours}:${minutes} ${ampm}`;
+    }
+
+    function updateTimer() {
+      const now = Date.now();
+      const remaining = endTimestamp - now;
+      document.getElementById('timer').textContent = formatTime(remaining);
+      document.getElementById('endTime').textContent = formatEndTime(endTimestamp);
+
+      if (remaining <= 0) {
+        clearInterval(intervalId);
+        document.getElementById('timer').textContent = '00:00:00';
+      }
+    }
+
+    function resetTimer() {
+      endTimestamp = Date.now() + THREE_HOURS_MS;
+      clearInterval(intervalId);
+      intervalId = setInterval(updateTimer, 1000);
+      updateTimer();
+    }
+
+    // Initialize
+    intervalId = setInterval(updateTimer, 1000);
+    updateTimer();
+  </script>
+</body>
+</html>
